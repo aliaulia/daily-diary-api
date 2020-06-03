@@ -43,7 +43,7 @@ Content-Type: application/json
 {
     "fullname": "Magister Register test tanpa angka",
     "birthday": "1998-11-11",
-    "email": "raykonji@gmail.com",
-    "username": "magagister",
-    "password": "M@gis"
+    "email": "magister@gmail.com",
+    "username": "magister",
+    "password": "M@gister1"
 }
