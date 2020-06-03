@@ -1,0 +1,49 @@
+
+################# RED ZONE MIGRATE #################
+
+# GET http://localhost:3000/migrate/diaries
+
+###
+
+# GET http://localhost:3000/migrate/users
+
+
+###
+################# PLAYGROUND #################
+GET http://localhost:3000/test
+
+
+###
+################# MASTER #################
+
+GET http://localhost:3000/diary/users
+
+###
+
+GET http://localhost:3000/diary/diaries
+
+###
+################# API #################
+
+POST http://localhost:3000/diary/login
+
+
+###
+
+POST http://localhost:3000/diary/register
+Content-Type: application/json
+
+# {
+#     "fullname": "Raykonji Register test",
+#     "birthday": "1998-12-14",
+#     "email": "raykonji@gmail.com",
+#     "username": "raykonji",
+#     "password": "R@ykonji1"
+# }
+{
+    "fullname": "Magister Register test tanpa angka",
+    "birthday": "1998-11-11",
+    "email": "raykonji@gmail.com",
+    "username": "magagister",
+    "password": "M@gis"
+}
