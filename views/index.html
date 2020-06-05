@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>LOGIN FORM TEST</h1>
+        <form action="" id="form-login">
+            <input type="text" name="input" id="input" placeholder="Username or email">
+            <input type="password" name="password" id="password" placeholder="password">
+            <button type="button" id="btn-login">Sign In</button>
+        </form>
+    </div>
+
+    <script>
+    (function(){
+        var login = document.getElementById('btn-login');
+        login.addEventListener('click', () => {
+            var input = document.getElementById('input').value;
+            var password = document.getElementById('password').value;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3000/diary/login", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify({
+                input:input,
+                password:password
+            }));
+            console.log('success');
+            // const userAction = async () => {
+            //     const response = await fetch('http://localhost:3000/diary/login', {
+            //         method: 'POST',
+            //         body: myBody, // string or object
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         }
+            //     });
+            //     const myJson = await response.json(); //extract JSON from the http response
+            //     console.log(myBody);
+            //     console.log(myJson);
+            //     alert('success');
+            // }
+            // do something with myJson
+        });
+    })();
+    </script>
+</body>
+</html>

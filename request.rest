@@ -25,8 +25,11 @@ GET http://localhost:3000/diary/diaries
 ###
 ################# API #################
 
-POST http://localhost:3000/diary/login
+GET http://localhost:3000/session
 
+###
+
+GET http://localhost:3000/logout
 
 ###
 
@@ -40,10 +43,95 @@ Content-Type: application/json
 #     "username": "raykonji",
 #     "password": "R@ykonji1"
 # }
+# {
+#     "fullname": "Magister Register test tanpa angka",
+#     "birthday": "1998-11-11",
+#     "email": "magister@gmail.com",
+#     "username": "magister",
+#     "password": "M@gister1"
+# }
+# {
+#     "fullname": "Juanda Sudirman",
+#     "birthday": "1965-02-02",
+#     "email": "juanda@gmail.com",
+#     "username": "juandapahlawan",
+#     "password": "Ju@nda1"
+# }
+# {
+#     "fullname": "Yasin Mayasin",
+#     "birthday": "1969-12-21",
+#     "email": "yasin@yahoo.com",
+#     "username": "yasin_cibaduyut",
+#     "password": "Y@sin1"
+# }
 {
-    "fullname": "Magister Register test tanpa angka",
-    "birthday": "1998-11-11",
-    "email": "magister@gmail.com",
-    "username": "magister",
-    "password": "M@gister1"
+    "fullname": "Juna Jamu",
+    "birthday": "1969-12-21",
+    "email": "juna@yahoo.com",
+    "username": "junajamu",
+    "password": "Jun@jamu1"
 }
+
+
+###
+
+POST http://localhost:3000/diary/login
+Content-Type: application/json
+
+# {
+#     "input" : "yasin_cibaduyut",
+#     "password" : "Y@sin1"
+# }
+# {
+#     "input" : "yasin@yahoo.com",
+#     "password" : "Y@sin1"
+# }
+# {
+#     "input": "juandapahlawan",
+#     "password": "Ju@nda1"
+# }
+# {
+#     "input": "juandapahlawan",
+#     "password": "Ju@an1"
+# }
+{
+    "input": "junajamu",
+    "password": "Jun@jamu1"
+}
+
+
+###
+POST http://localhost:3000/diary/save
+Content-Type: application/json
+
+# {
+#     "diary_id": "2",
+#     "date": "2020-02-03",
+#     "title": "berawal dari kisah pertemuan dua orang baik",
+#     "content": "test bertemu teman sepermainan dua kali",
+#     "user_id": "8"    
+# }
+# {
+#     "date": "2019-12-10",
+#     "title": "Akhir tahun yang baik baik biarlah tetap baik",
+#     "content": "test akhir tahun dapat angpao apapun yang terjadi",
+#     "user_id": "12"    
+# }
+# {
+#     "date": "2019-06-15",
+#     "title": "Menelusur keingintahuan update",
+#     "content": "test keingintahuan anda dengan membuat test update",
+#     "user_id": "21"
+# }
+{
+    "date": "2020-06-18",
+    "title": "Lorem adalah ketidakpastian",
+    "content": "menulis dengan lorem cukup memudahkan orang-orang dalam mengembangkan program",
+    "user_id": "23"
+}
+
+###
+GET http://localhost:3000/diary/2020/1
+
+###
+GET http://localhost:3000/diary/2020/2?offset=0&limit=5
