@@ -29,11 +29,12 @@ GET http://localhost:3000/session
 
 ###
 
-GET http://localhost:3000/logout
+PUT http://localhost:3000/user/logout
+
 
 ###
 
-POST http://localhost:3000/diary/register
+POST http://localhost:3000/user/register
 Content-Type: application/json
 
 # {
@@ -64,18 +65,25 @@ Content-Type: application/json
 #     "username": "yasin_cibaduyut",
 #     "password": "Y@sin1"
 # }
+# {
+#     "fullname": "Juna Jamu",
+#     "birthday": "1969-12-21",
+#     "email": "juna@yahoo.com",
+#     "username": "junajamu",
+#     "password": "Jun@jamu1"
+# }
 {
-    "fullname": "Juna Jamu",
-    "birthday": "1969-12-21",
-    "email": "juna@yahoo.com",
-    "username": "junajamu",
-    "password": "Jun@jamu1"
+    "fullname": "Radu Sudabiyo",
+    "birthday": "1991-07-10",
+    "email": "radu@yahoo.com",
+    "username": "radusudabiyo",
+    "password": "R@adu1"
 }
 
 
 ###
 
-POST http://localhost:3000/diary/login
+PUT http://localhost:3000/user/login
 Content-Type: application/json
 
 # {
@@ -101,7 +109,7 @@ Content-Type: application/json
 
 
 ###
-POST http://localhost:3000/diary/save
+PUT http://localhost:3000/diary/save
 Content-Type: application/json
 
 # {
@@ -123,15 +131,22 @@ Content-Type: application/json
 #     "content": "test keingintahuan anda dengan membuat test update",
 #     "user_id": "21"
 # }
+# {
+#     "date": "2020-06-18",
+#     "title": "Lorem adalah ketidakpastian",
+#     "content": "menulis dengan lorem cukup memudahkan 
+#                 orang-orang dalam mengembangkan program",
+#     "user_id": "23"
+# }
 {
-    "date": "2020-06-18",
-    "title": "Lorem adalah ketidakpastian",
-    "content": "menulis dengan lorem cukup memudahkan orang-orang dalam mengembangkan program",
-    "user_id": "23"
+    "date": "2020-01-08",
+    "title": "bersantai di gunung kidul",
+    "content": "berfoto ria di gunung kidul"
 }
 
 ###
 GET http://localhost:3000/diary/2020/1
 
 ###
-GET http://localhost:3000/diary/2020/2?offset=0&limit=5
+GET http://localhost:3000/diary/2020/1?offset=4&limit=3
+

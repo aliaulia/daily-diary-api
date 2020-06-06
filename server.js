@@ -268,12 +268,12 @@ function checkDiary(user_id, date){
     });
 }
 
-function insertDiary(params){
+function insertDiary(user_id, params){
     return new Promise((resolve, reject) => {
 
         sql = "INSERT INTO diaries (date, title, content, user_id) VALUES ?";
         var value = [
-            [params.date, params.title, params.content, params.user_id]
+            [params.date, params.title, params.content, user_id]
         ];
         db.query(sql, [value] , function (err ,result, fields) {
             if (err) throw err;
@@ -287,10 +287,10 @@ function insertDiary(params){
     });
 }
 
-function updateDiary(params){
+function updateDiary(user_id, params){
     return new Promise((resolve, reject) => {
         sql = "UPDATE diaries SET title = ?, content = ? WHERE user_id = ? AND date = ?";
-        db.query(sql, [params.title, params.content, params.user_id, params.date] , function (err ,result, fields) {
+        db.query(sql, [params.title, params.content, user_id, params.date] , function (err ,result, fields) {
             if (err) throw err;
             if(result.affectedRows){
                 resolve(result.affectedRows);
@@ -343,6 +343,11 @@ app.get('/', (req, res) => {
     // res.status(200).send('Welcome to API');
 });
 
+app.get('/register', (req, res) => {
+    res.render('register.html');
+    // res.status(200).send('Welcome to API');
+});
+
 app.get('/diary/users', (req, res) => {
     try{
         let sql = "SELECT * FROM users";
@@ -373,7 +378,51 @@ app.get('/diary/diaries', (req, res) => {
     }
 });
 
-app.post('/diary/register', async (req, res) => {
+
+app.get('/session', async (req, res) => {
+    try{
+        console.log(req.session.id);
+        const session_check = await checkSession(req.session.user_id, req.session.id);
+        res.json({
+            'id' : req.session.id,
+            'user_id' : req.session.user_id,
+            'username' : req.session.username
+        });
+    }
+    catch(err){
+        console.log(err);
+        if(err ==='accessForbidden403'){
+            res.status(401);
+            res.json({
+                success : false,
+                message: 'You have no access in this page.'
+            });
+        }
+        else if(err ==='noSession'){
+            res.status(201);
+            res.json({
+                success : false,
+                message: 'No session.'
+            });
+        }
+        else if(err ==='sessionRemoved'){
+            res.status(201);
+            res.json({
+                success : false,
+                message: '1 device only. You have been login on another device'
+            });
+        }
+        else{
+            res.status(500);
+            res.json({
+                success : false,
+                message: 'internal server error 500'
+            });
+        }
+    }
+});
+
+app.post('/user/register', async (req, res) => {
     try{
         user_fullname = req.body.fullname; 
         user_birthday = req.body.birthday; 
@@ -444,57 +493,15 @@ app.post('/diary/register', async (req, res) => {
     }
 });
 
-app.get('/session', async (req, res) => {
-    try{
-        console.log(req.session.id);
-        const session_check = await checkSession(req.session.user_id, req.session.id);
-        res.json({
-            'id' : req.session.id,
-            'user_id' : req.session.user_id,
-            'username' : req.session.username
-        });
-    }
-    catch(err){
-        console.log(err);
-        if(err ==='accessForbidden403'){
-            res.status(401);
-            res.json({
-                success : false,
-                message: 'You have no access in this page.'
-            });
-        }
-        else if(err ==='noSession'){
-            res.status(201);
-            res.json({
-                success : false,
-                message: 'No session.'
-            });
-        }
-        else if(err ==='sessionRemoved'){
-            res.status(201);
-            res.json({
-                success : false,
-                message: '1 device only. You have been login on another device'
-            });
-        }
-        else{
-            res.status(500);
-            res.json({
-                success : false,
-                message: 'internal server error 500'
-            });
-        }
-    }
-});
-
-app.get('/logout', async (req, res) => {
+app.put('/user/logout', async (req, res) => {
     try{
         const user = await userSessionClear(req.session.user_id);
         req.session.destroy((err) =>{
             if (err) throw err;
         });
         res.json({
-            'message' : 'no session'
+            'success' : true,
+            'message' : 'Log out success'
         });
     }
     catch(err){
@@ -516,7 +523,7 @@ app.get('/logout', async (req, res) => {
     }
 });
 
-app.post('/diary/login', async (req, res) => {
+app.put('/user/login', async (req, res) => {
     try{
         const user = await checkUser(req.body);
         const comparePassowrd = await bcrypt.compare(req.body.password, user[0].password);
@@ -568,7 +575,38 @@ app.post('/diary/login', async (req, res) => {
     }
 });
 
-app.post('/diary/save', async (req, res) => {
+app.get('/diary',async (req, res) => {
+    try{
+        const session_check = await checkSession(req.session.user_id, req.session.id)
+        res.render('diary.html');
+    }
+    catch(err){
+        if (err === 'sessionRemoved'){
+            res.status(401);
+            res.json({
+                success: false,
+                message: "You have been login in other device. Only 1 device geting access."
+            });
+        }
+        else if(err === 'accessForbidden403'){
+            res.status(403);
+            res.json({
+                success: false,
+                message: 'You have no access in this page.'
+            });    
+        }
+        else{
+            res.status(500);
+            res.json({
+                success: false,
+                message: "Internal Error 500",
+                error: err
+            });
+        }
+    }
+});
+
+app.put('/diary/save', async (req, res) => {
     try{
         message = "";
 
@@ -577,11 +615,11 @@ app.post('/diary/save', async (req, res) => {
         const diary_status = await checkDiary(req.session.user_id, req.body.date); //user id check from session
         
         if(diary_status === 'update'){
-            const diary = await updateDiary(req.body);
+            const diary = await updateDiary(req.session.user_id, req.body);
             message = 'Diary updated.';
         }
         else if(diary_status === 'insert'){
-            const diary = await insertDiary(req.body);
+            const diary = await insertDiary(req.session.user_id, req.body);
             message = 'Diary created.';
         }
 

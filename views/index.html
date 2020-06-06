@@ -23,27 +23,13 @@
             var input = document.getElementById('input').value;
             var password = document.getElementById('password').value;
             var xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "http://localhost:3000/diary/login", true);
+            xhttp.open("PUT", "http://localhost:3000/user/login", true);
             xhttp.setRequestHeader("Content-Type", "application/json");
             xhttp.send(JSON.stringify({
                 input:input,
                 password:password
             }));
             console.log('success');
-            // const userAction = async () => {
-            //     const response = await fetch('http://localhost:3000/diary/login', {
-            //         method: 'POST',
-            //         body: myBody, // string or object
-            //         headers: {
-            //             'Content-Type': 'application/json'
-            //         }
-            //     });
-            //     const myJson = await response.json(); //extract JSON from the http response
-            //     console.log(myBody);
-            //     console.log(myJson);
-            //     alert('success');
-            // }
-            // do something with myJson
         });
     })();
     </script>

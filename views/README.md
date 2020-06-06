@@ -11,12 +11,13 @@ Daily Diary API is a mini project to storing diary by date entries with RESTFUL 
 1. First, make sure to Import diary_daily_db.sql to phpmyadmin
 
 # How It Works
-Daily Diary contain a list of API. the API include authentication and session system. To maximize the API, first you should pass the authentication.
+Daily Diary contain a list of API. the API include authentication and session system. *Given an asumption the API is used on closed environment system*, To make all the APIs work, first you should pass the authentication (yes, this system have an authentication API).
 
-All the APIs is integrated with session system. Session system will be explained in the section below.
+User must log to the system first because all the APIs are integrated with session system. Session system will be explained in the section below.
 
 ## Session
-In this project, user will get session token everytime he sign in with login API. Everytime user request to the server, it will check your session if your session it still valid or not. A user session become invalid when the same user is signed in on another device.
+In this project, user will get session token everytime he sign in with login API. Everytime user send a request to the server, system will check your session if your session is still valid or not. A user session become invalid when the same user is signed in on another device. The one who get the access is the latest user who log into the system.
+
     
     In other words, a user can only have 1 active session at one time.
 

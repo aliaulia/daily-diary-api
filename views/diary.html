@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>Write Diary Today Test</h1>
+        <form action="" id="form-diary">
+            <label>diary date</label>
+            <br>
+            <input type="date" id="date">
+            <br>
+            <input type="text" name="title" id="title" placeholder="Diary Title">
+            <br>
+            <textarea name="content" id="content" placeholder="Insert what hapenned here..."></textarea>
+            <br>
+            <button type="button" id="btn-action">Save</button>
+        </form>
+    </div>
+
+    <script>
+    (function(){
+        var login = document.getElementById('btn-action');
+        login.addEventListener('click', () => {
+            var date = document.getElementById('date').value;
+            var title = document.getElementById('title').value;
+            var content = document.getElementById('content').value;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("PUT", "http://localhost:3000/diary/save", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            xhttp.send(JSON.stringify({
+                date:date,
+                title:title,
+                content:content,
+            }));
+            console.log('success');
+        });
+    })();
+    </script>
+</body>
+</html>
