@@ -23,101 +23,9 @@ db.connect(function(err) {
     console.log("Connected!");
 });
 
-// INSERT MULTIPLE VALUES
-app.post('/migrate/users', async (req, res) => {
-    
-    let sql = "INSERT INTO users (fullname, birthday, email, username, password) VALUES ?";
-
-    // let pass1 = await bcrypt.hash('password1', 10);
-    // let pass2 = await bcrypt.hash('password2', 10);
-    // let pass3 = await bcrypt.hash('password3', 10);
-    // let pass4 = await bcrypt.hash('password4', 10);
-    // let pass5 = await bcrypt.hash('password5', 10);
-    // let pass6 = await bcrypt.hash('password6', 10);
-
-    var values = [
-        ['aba ba', '1994-03-12', 'nama1@gmail.com', 'pintar1', pass1],
-        ['abi bu', '1993-12-26', 'nama2@gmail.com', 'pintar2', pass2],
-        ['abi bi', '2000-08-07', 'nama3@gmail.com', 'pintar3', pass3],
-        ['caka ca', '1997-01-09', 'nama4@gmail.com', 'pintar4', pass4],
-        ['caka ci', '1995-03-13', 'nama5@gmail.com', 'pintar5', pass5],
-        ['caka cu', '2005-06-19', 'nama6@gmail.com', 'pintar6', pass6]
-    ];
-    db.query(sql, [values], function (err, result) {
-        if (err) throw err;
-        console.log("Number of records inserted: " + result.affectedRows);
-    }); 
-});
-
-// MIGRATE DIARY
-app.get('/migrate/diaries', async (req, res) => {
-    try{
-        let sql = "INSERT INTO diaries (date, title, content, user_id) VALUES ?";
-    
-        var values = [
-            ['2020-02-03', 'test diary yang pertama', 'test isi content yang pertama', 7],
-            ['2020-02-03', 'berawal dari sebuah pertemuan', 'test bertemu teman sepermainan', 8],
-            ['2020-02-04', 'hari terakhir sekolah', 'test isi content yang kedua ', 8],
-            ['2020-03-07', 'senantiasa menaklukan kejahatan', 'test isi content yang ketiga', 8],
-            ['2020-03-09', 'In food we trust', 'test isi content yang keempat', 9],
-            ['2020-03-13', 'Tenaga kesehatan di bantu warga', 'test isi content yang kelima', 12],
-            ['2020-04-19', 'Olahraga hari minggu', 'test isi content yang keenam', 12]
-        ];
-        db.query(sql, [values], function (err, result) {
-            if (err) throw err;
-            console.log("Number of records inserted: " + result.affectedRows);
-            res.status(201).send("Number of records inserted: " + result.affectedRows);
-        }); 
-    }
-    catch{
-        res.status(500).send("Failed");
-    }
-});
-
-// PLAYGROUND
-app.get('/test', async (req, res) => {
-    try{
-        // email = "raykonji@gmail.com";
-        // message = null;
-        // const emailResult = await checkEmail(email);
-        
-        // res.status(201);
-        // res.json({
-        //     message : 'email not exist. you may register'
-        // });
-        var pass = [
-            'Pint@r1', 
-            'Pint@r2', 
-            'Pint@r3', 
-            'Pint@r4', 
-            'Pint@r5', 
-            'Pint@r6', 
-            'R@ykonji1', 
-            'M@gister1', 
-            'Ju@an1', 
-            'Y@sin1', 
-        ]
-        pass.forEach(async (el) => {
-            const hashedPassword = await bcrypt.hash(el, 10);
-            console.log( el + ' => ' + hashedPassword );
-        })
-
-    }catch (err){
-        console.log(err);
-        if(err === 'emailExist'){
-            res.status(201);
-            res.json({
-                message : 'email exist. you cannot register'
-            });
-        }
-        else{
-            res.status(500).send('Internal server error 500')
-        }
-    }
-});
-
 // FUNCTION
 
+// Check exist email
 function checkEmail(email){
     return new Promise((resolve, reject) => {
         sqlGetUserEmail = "SELECT * FROM users WHERE email = ?";
@@ -133,6 +41,7 @@ function checkEmail(email){
     });
 }
 
+// check exist username
 function checkUsername(username){
     return new Promise((resolve, reject) => {
         sqlGetUserEmail = "SELECT * FROM users WHERE username = ?";
@@ -148,6 +57,7 @@ function checkUsername(username){
     });
 }
 
+// check valid password
 function checkPassword(password){
     return new Promise((resolve, reject) => {
         if(password.length >= 6 && password.length <= 32){
@@ -164,12 +74,13 @@ function checkPassword(password){
     });
 }
 
+// insert user to databse
 function insertUser(params, hashedPassword){
     return new Promise((resolve, reject) => {
 
         sqlInsertUser = "INSERT INTO users (fullname, birthday, email, username, password) VALUES ?";
         var value = [
-            [user_fullname, user_birthday, user_email, user_username, hashedPassword]
+            [params.fullname, params.birthday, params.email, params.username, hashedPassword]
         ];
         db.query(sqlInsertUser, [value] ,function (err, result, fields) {
             if (err) throw err;
@@ -183,12 +94,12 @@ function insertUser(params, hashedPassword){
     });
 }
 
+// check exist user
 function checkUser(params){
     return new Promise((resolve, reject) => {
         sql = "SELECT * FROM users WHERE username = ? OR email = ?";
         db.query(sql, [params.input, params.input] , function (err ,result, fields) {
             if (err) throw err;
-            console.log(params);
             if(Array.isArray(result) && result.length > 0){
                 resolve(result);
             }
@@ -199,7 +110,7 @@ function checkUser(params){
     });
 }
 
-// ATTENTION : MODIFY REJECT ERROR HANDLER
+// set user session
 function userSession(user_id, session_token){
     return new Promise((resolve, reject) => {
         sql = "UPDATE users SET session_token = ? WHERE user_id = ?";
@@ -215,6 +126,7 @@ function userSession(user_id, session_token){
     });
 }
 
+// check valid session of user
 function checkSession(user_id, session_token){
     return new Promise((resolve, reject) => {
         sql = "SELECT session_token FROM users WHERE user_id = ?";
@@ -238,6 +150,7 @@ function checkSession(user_id, session_token){
     });
 }
 
+// clear session of user
 function userSessionClear(user_id){
     return new Promise((resolve, reject) => {
         sql = "UPDATE users SET session_token = NULL WHERE user_id = ?";
@@ -247,12 +160,13 @@ function userSessionClear(user_id){
                 resolve(result.affectedRows);
             }
             else{
-                reject(result.affectedRows);
+                reject('userNotLogin');
             }
         });
     });
 }
 
+// check exist diary
 function checkDiary(user_id, date){
     return new Promise((resolve, reject) => {
         sql = "SELECT * FROM diaries WHERE user_id = ? AND date = ?";
@@ -268,6 +182,7 @@ function checkDiary(user_id, date){
     });
 }
 
+// insert new diary to database
 function insertDiary(user_id, params){
     return new Promise((resolve, reject) => {
 
@@ -281,12 +196,13 @@ function insertDiary(user_id, params){
                 resolve(result.affectedRows);
             }
             else{
-                reject(result.affectedRows);
+                reject('insertDiaryFailure');
             }
         });
     });
 }
 
+// update exist diary in database
 function updateDiary(user_id, params){
     return new Promise((resolve, reject) => {
         sql = "UPDATE diaries SET title = ?, content = ? WHERE user_id = ? AND date = ?";
@@ -296,12 +212,13 @@ function updateDiary(user_id, params){
                 resolve(result.affectedRows);
             }
             else{
-                reject(result.affectedRows);
+                reject('updateDiaryFailure');
             }
         });
     });
 }
 
+// get diary entries by date and quartal
 function getDiaryEntries(user_id, params, query){
     return new Promise((resolve, reject) => {
         var quartal = [];
@@ -320,7 +237,6 @@ function getDiaryEntries(user_id, params, query){
                 quartal.push(10, 12);
                 break;
         }
-        // console.log(params.quartal);
         if(query.limit && query.offset){
             var limit = query.limit;
             var offset = query.offse;
@@ -328,253 +244,28 @@ function getDiaryEntries(user_id, params, query){
         }
         
         sql = "SELECT * FROM diaries WHERE user_id = ? AND YEAR(date) = ? AND (MONTH(date) >= ? AND MONTH(date) <= ?) ORDER BY date ASC " + sqlPagination;
-        console.log(sql);
         db.query(sql, [user_id, params.year, quartal[0], quartal[1]] , function (err ,result, fields) {
             if (err) throw err;
-            console.log(result)
             resolve(result);
         });
     });
 }
 
-// API
+// VIEWS
+
+// Generate Login Page
 app.get('/', (req, res) => {
     res.render('index.html');
     // res.status(200).send('Welcome to API');
 });
 
+// Generate Register Page
 app.get('/register', (req, res) => {
     res.render('register.html');
     // res.status(200).send('Welcome to API');
 });
 
-app.get('/diary/users', (req, res) => {
-    try{
-        let sql = "SELECT * FROM users";
-    
-        db.query(sql, function (err, result, fields) {
-            if (err) throw err;
-            res.status(201);
-            res.json(result);
-        });
-    }
-    catch{
-        res.status(500).send("Failed");
-    }
-});
-
-app.get('/diary/diaries', (req, res) => {
-    try{
-        let sql = "SELECT * FROM diaries";
-    
-        db.query(sql, function (err, result, fields) {
-            if (err) throw err;
-            res.status(200);
-            res.json(result);
-        });
-    }
-    catch{
-        res.status(500).send("Failed");
-    }
-});
-
-
-app.get('/session', async (req, res) => {
-    try{
-        console.log(req.session.id);
-        const session_check = await checkSession(req.session.user_id, req.session.id);
-        res.json({
-            'id' : req.session.id,
-            'user_id' : req.session.user_id,
-            'username' : req.session.username
-        });
-    }
-    catch(err){
-        console.log(err);
-        if(err ==='accessForbidden403'){
-            res.status(401);
-            res.json({
-                success : false,
-                message: 'You have no access in this page.'
-            });
-        }
-        else if(err ==='noSession'){
-            res.status(201);
-            res.json({
-                success : false,
-                message: 'No session.'
-            });
-        }
-        else if(err ==='sessionRemoved'){
-            res.status(201);
-            res.json({
-                success : false,
-                message: '1 device only. You have been login on another device'
-            });
-        }
-        else{
-            res.status(500);
-            res.json({
-                success : false,
-                message: 'internal server error 500'
-            });
-        }
-    }
-});
-
-app.post('/user/register', async (req, res) => {
-    try{
-        user_fullname = req.body.fullname; 
-        user_birthday = req.body.birthday; 
-        user_email = req.body.email; 
-        user_username = req.body.username; 
-        user_password = req.body.password; 
-
-        const emailResult = await checkEmail(user_email);
-        const usernameResult = await checkUsername(user_username);
-        const passwordResult = await checkPassword(user_password);
-        
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(user_password, salt);
-        // INSERT NEW USER
-        const user = await insertUser(req.body, hashedPassword);
-        
-        res.status(201);
-        res.json({
-            success: true,
-            message: "Success register new user."
-        });
-    }
-    catch (err){
-        // console.log(err);
-        if(err === 'emailExist'){
-            res.status(200);
-            res.json({
-                success: false,
-                message: "Registered email already exist. Please use other email."
-            });
-        }
-        else if(err === 'usernameExist'){
-            res.status(200);
-            res.json({
-                success: false,
-                message: "Username already taken. Please try another username."
-            });
-        }
-        else if(err === 'passwordLength'){
-            res.status(200);
-            res.json({
-                success: false,
-                message: "Password must have length between 6-32 characters."
-            });
-        }
-        else if(err === 'passwordFailure'){
-            res.status(200);
-            res.json({
-                success: false,
-                message: "Password must have contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and one special character."
-            });
-        }
-        else if(err === 'insertUserFailure'){
-            res.status(200);
-            res.json({
-                success: false,
-                message: "Failure occured when regiserting new user."
-            });
-        }
-        else{
-            res.status(500);
-            res.json({
-                success: false,
-                message: "Internal Error 500",
-                error: err,
-            });
-        }
-    }
-});
-
-app.put('/user/logout', async (req, res) => {
-    try{
-        const user = await userSessionClear(req.session.user_id);
-        req.session.destroy((err) =>{
-            if (err) throw err;
-        });
-        res.json({
-            'success' : true,
-            'message' : 'Log out success'
-        });
-    }
-    catch(err){
-        if(err === 0){
-            res.status(500);
-            res.json({
-                success : false,
-                message: 'You have not been login ',
-            })
-        }
-        else{
-            res.status(500);
-            res.json({
-                success : false,
-                message: 'Internal Server error',
-                error: err
-            })
-        }
-    }
-});
-
-app.put('/user/login', async (req, res) => {
-    try{
-        const user = await checkUser(req.body);
-        const comparePassowrd = await bcrypt.compare(req.body.password, user[0].password);
-        if( comparePassowrd ){
-            // create session
-            req.session.id = await bcrypt.hash(user[0].username, 10);
-            req.session.user_id = user[0].user_id;
-            req.session.username = user[0].username;
-            
-            const grantedSession = await userSession(req.session.user_id, req.session.id);
-
-            res.status(200)
-            res.json({
-                success : true,
-                message : "Access Granted."
-            });
-        }else{
-            res.status(200)
-            res.json({
-                success : false,
-                message : "Username or password is incorrect."
-            });
-        }
-        
-    }catch(err){
-        // console.log(err);
-        if(err === 'userNotExist'){
-            res.status(200)
-            res.json({
-                success : false,
-                message : "Username or password is incorrect."
-            });
-        }
-        else if(err === 'userSessionFailure'){
-            res.status(200)
-            res.json({
-                success : false,
-                message : "Failure occured when login."
-            });
-        }
-        else{
-            res.status(500)
-            res.json({
-                success : false,
-                message : "internal sever error 500",
-                error : err
-            });
-        }
-    }
-});
-
+// Generate Save Diary Page
 app.get('/diary',async (req, res) => {
     try{
         const session_check = await checkSession(req.session.user_id, req.session.id)
@@ -606,6 +297,163 @@ app.get('/diary',async (req, res) => {
     }
 });
 
+
+// USER ENDPOINTS
+
+// Register user
+app.post('/user/register', async (req, res) => {
+    try{
+        user_fullname = req.body.fullname; 
+        user_birthday = req.body.birthday; 
+        user_email = req.body.email; 
+        user_username = req.body.username; 
+        user_password = req.body.password; 
+
+        const emailResult = await checkEmail(user_email);
+        const usernameResult = await checkUsername(user_username);
+        const passwordResult = await checkPassword(user_password);
+        
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(user_password, salt);
+        // INSERT NEW USER
+        const user = await insertUser(req.body, hashedPassword);
+        
+        res.status(200);
+        res.json({
+            success: true,
+            message: "Success register new user."
+        });
+    }
+    catch (err){
+        if(err === 'emailExist'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Registered email already exist. Please use other email."
+            });
+        }
+        else if(err === 'usernameExist'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Username already taken. Please try another username."
+            });
+        }
+        else if(err === 'passwordLength'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Password must have length between 6-32 characters."
+            });
+        }
+        else if(err === 'passwordFailure'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Password must have contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and one special character."
+            });
+        }
+        else if(err === 'insertUserFailure'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Failure occured when registering new user."
+            });
+        }
+        else{
+            res.status(500);
+            res.json({
+                success: false,
+                message: "Internal Error 500",
+                error: err,
+            });
+        }
+    }
+});
+
+// Logout From System
+app.put('/user/logout', async (req, res) => {
+    try{
+        const user = await userSessionClear(req.session.user_id);
+        req.session.destroy((err) =>{
+            if (err) throw err;
+        });
+        res.json({
+            'success' : true,
+            'message' : 'Log out success'
+        });
+    }
+    catch(err){
+        if(err === 'userNotLogin'){
+            res.status(400);
+            res.json({
+                success : false,
+                message: 'You have not been login.',
+            })
+        }
+        else{
+            res.status(500);
+            res.json({
+                success : false,
+                message: 'Internal Server error',
+                error: err
+            })
+        }
+    }
+});
+
+// Login Into System
+app.put('/user/login', async (req, res) => {
+    try{
+        const user = await checkUser(req.body);
+        const comparePassword = await bcrypt.compare(req.body.password, user[0].password);
+        if( comparePassword ){
+            // create session
+            req.session.id = await bcrypt.hash(user[0].username, 10);
+            req.session.user_id = user[0].user_id;
+            req.session.username = user[0].username;
+            
+            const grantedSession = await userSession(req.session.user_id, req.session.id);
+
+            res.status(200)
+            res.json({
+                success : true,
+                message : "Access Granted."
+            });
+        }else{
+            throw 'userNotExist';
+        }
+        
+    }catch(err){
+        if(err === 'userNotExist'){
+            res.status(400)
+            res.json({
+                success : false,
+                message : "Username or password is incorrect."
+            });
+        }
+        else if(err === 'userSessionFailure'){
+            res.status(400)
+            res.json({
+                success : false,
+                message : "Failure occured when login."
+            });
+        }
+        else{
+            res.status(500)
+            res.json({
+                success : false,
+                message : "internal sever error 500",
+                error : err
+            });
+        }
+    }
+});
+
+
+// DIARY ENDPOINTS
+
+// Save diary into database
 app.put('/diary/save', async (req, res) => {
     try{
         message = "";
@@ -630,7 +478,6 @@ app.put('/diary/save', async (req, res) => {
         });
 
     }catch(err){
-        // console.log(err);
         if (err === 'sessionRemoved'){
             res.status(401);
             res.json({
@@ -638,11 +485,18 @@ app.put('/diary/save', async (req, res) => {
                 message: "You have been login in other device. Only 1 device geting access."
             });
         }
-        else if (err === 0){
-            res.status(200);
+        else if (err === 'insertDiaryFailure'){
+            res.status(400);
             res.json({
                 success: false,
-                message: "No diary to be saved."
+                message: "Failure occured when save a new diary."
+            });
+        }
+        else if (err === 'updateDiaryFailure'){
+            res.status(400);
+            res.json({
+                success: false,
+                message: "Failure occured when save a diary saved."
             });
         }
         else if(err === 'accessForbidden403'){
@@ -663,6 +517,7 @@ app.put('/diary/save', async (req, res) => {
     }
 });
 
+// Show diary based on year and quartal
 app.get('/diary/:year/:quartal', async (req, res) => {
     try{
         const session_check = await checkSession(req.session.user_id, req.session.id);
@@ -674,7 +529,6 @@ app.get('/diary/:year/:quartal', async (req, res) => {
         });
         
     }catch(err){
-        console.log(err)
         if(err === 'noData'){
             res.status(200);
             res.json({
@@ -706,5 +560,14 @@ app.get('/diary/:year/:quartal', async (req, res) => {
     }
 });
 
+app.use(function (req, res, next) {
+    res.status(404).send("Sorry can't find that!")
+  })
 
-app.listen(3000)
+var server = app.listen(3000, () => {
+    var host = server.address().address;
+    console.log(host);
+    var port = server.address().port;
+    console.log('Listening on::::::::::%s:%s', host, port);
+});
+

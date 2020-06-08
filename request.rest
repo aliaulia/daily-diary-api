@@ -1,33 +1,6 @@
 
-################# RED ZONE MIGRATE #################
-
-# GET http://localhost:3000/migrate/diaries
-
-###
-
-# GET http://localhost:3000/migrate/users
-
-
-###
-################# PLAYGROUND #################
-GET http://localhost:3000/test
-
-
-###
-################# MASTER #################
-
-GET http://localhost:3000/diary/users
-
-###
-
-GET http://localhost:3000/diary/diaries
-
 ###
 ################# API #################
-
-GET http://localhost:3000/session
-
-###
 
 PUT http://localhost:3000/user/logout
 
@@ -148,5 +121,5 @@ Content-Type: application/json
 GET http://localhost:3000/diary/2020/1
 
 ###
-GET http://localhost:3000/diary/2020/1?offset=4&limit=3
+GET http://localhost:3000/diary/2020/1?offset=0&limit=3
 
