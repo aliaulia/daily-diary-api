@@ -20,7 +20,7 @@ In this project, user will get session token everytime he sign in with login API
 
 There are 2 type of session handler : 
 
-1. **Forbidden** : an user who not signed in frist (re: guest user) request to server is not have a session saved on memory.
+1. **Forbidden** : an user who not signed in first (re: guest user) request to server is not have a session saved on memory.
 2. **Session Removed** : a session has been removed due to an sign in activities of the same user in other device.
 
 ## Project page
