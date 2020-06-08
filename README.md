@@ -31,4 +31,4 @@ In project, there are available page to try the api. the Available pages are exp
 - `/diary` : diary page, show diary form to save a diary
 
 # Test Case
-In root folder, you can try some test case in [request.rest](../request.rest). Try these test cases with visual [studio code](https://code.visualstudio.com/Download) and plugin [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+In root folder, you can try some test case in [request.rest](/request.rest). Try these test cases with visual [studio code](https://code.visualstudio.com/Download) and plugin [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
