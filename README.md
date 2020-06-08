@@ -4,7 +4,8 @@ Daily Diary API is a mini project to storing diary by date entries with RESTFUL 
 ## Deployment
 1. First, make sure to Import diary_daily_db.sql to phpmyadmin on server or localhost.
 2. Deploy root folder to server or localhost.
-3. on the terminal, type `npm start` to start API.
+3. Open project folder with terminal, and run `npm install` command to install all dependency.
+4. After than, run `npm start` in your project folder to start API.
 
 # How It Works
 Daily Diary contain a list of API. the API include authentication and session system. *Given an asumption the API is used on closed environment system*, To make all the APIs work, first you should pass the authentication (yes, this system have an authentication API).
